@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Manager | BusTicket</title>
+    <meta name="description" content="Add, manage, and browse all travel routes. Create bookings directly from available routes.">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/appointment.css">
+    <link rel="stylesheet" href="/routes-manager.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="appt-body">
+
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="/" class="logo" style="text-decoration:none;">
+                    <i class="fas fa-bus-alt"></i> BusTicket
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/appointment.html">Appointments</a></li>
+                    <li><a href="/routes-manager.html" class="active">Route Manager</a></li>
+                </ul>
+                <a href="/" class="btn-primary" style="text-decoration:none; font-size:0.9rem;">
+                    <i class="fas fa-arrow-left" style="margin-right:6px;"></i> Back to App
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="rm-hero">
+        <div class="rm-hero-overlay"></div>
+        <div class="container rm-hero-content">
+            <div class="appt-hero-badge"><i class="fas fa-route"></i> Route Management</div>
+            <h1>Manage Travel Routes</h1>
+            <p>Add, edit, and delete bus routes. All changes are saved directly to the MySQL <code>routes</code> table.</p>
+            <div class="rm-hero-stats" id="hero-stats">
+                <div class="rm-hero-stat"><span id="hs-total">--</span><small>Total Routes</small></div>
+                <div class="rm-hero-stat"><span id="hs-cities">--</span><small>Cities Covered</small></div>
+                <div class="rm-hero-stat"><span id="hs-today">--</span><small>Added Today</small></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN -->
+    <main class="appt-main">
+        <div class="container">
+
+            <!-- TABS -->
+            <div class="appt-tab-bar">
+                <button class="appt-tab active" id="tab-add"    onclick="rmTab('add')">
+                    <i class="fas fa-plus-circle"></i> Add Route
+                </button>
+                <button class="appt-tab" id="tab-routes" onclick="rmTab('routes')">
+                    <i class="fas fa-list-ul"></i> Routes List
+                </button>
+                <button class="appt-tab" id="tab-book"   onclick="rmTab('book')">
+                    <i class="fas fa-ticket-alt"></i> Book via Route
+                </button>
+            </div>
+
+            <!-- ======================== TAB: ADD ROUTE ======================== -->
+            <div class="rm-tab-content active" id="content-add">
+                <div class="rm-two-col">
+
+                    <!-- FORM CARD -->
+                    <div class="appt-card rm-form-card">
+                        <div class="appt-card-header">
+                            <div class="appt-card-icon" id="form-icon-el">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <div>
+                                <h2 id="form-title">Add New Route</h2>
+                                <p id="form-subtitle">Fill in the details and click <strong>Add Route</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- SUCCESS BANNER -->
+                        <div class="rm-success-banner" id="rm-success-banner" style="display:none;">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <strong id="rm-success-title">Route added successfully!</strong>
+                                <span id="rm-success-detail"></span>
+                            </div>
+                            <button class="rm-banner-close" onclick="hideBanner()">×</button>
+                        </div>
+
+                        <form id="routeForm" novalidate>
+                            <input type="hidden" id="edit-route-id">
+
+                            <div class="appt-form-row">
+                                <div class="appt-form-group" id="grp-from">
+                                    <label for="r-from">
+                                        <i class="fas fa-map-marker-alt"></i> From (Origin)
+                                    </label>
+                                    <input type="text" id="r-from" placeholder="e.g. Hyderabad" autocomplete="off">
+                                    <span class="appt-error" id="err-from"></span>
+                                </div>
+                                <div class="appt-form-group" id="grp-to">
+                                    <label for="r-to">
+                                        <i class="fas fa-map-pin"></i> To (Destination)
+                                    </label>
+                                    <input type="text" id="r-to" placeholder="e.g. Vijayawada" autocomplete="off">
+                                    <span class="appt-error" id="err-to"></span>
+                                </div>
+                            </div>
+
+                            <div class="appt-form-group" id="grp-name">
+                                <label for="r-name">
+                                    <i class="fas fa-tag"></i> Route Name
+                                </label>
+                                <input type="text" id="r-name" placeholder="e.g. Hyderabad – Vijayawada Express Route">
+                                <span class="appt-error" id="err-name"></span>
+                            </div>
+
+                            <div class="appt-form-row">
+                                <div class="appt-form-group" id="grp-fare">
+                                    <label for="r-fare">
+                                        <i class="fas fa-rupee-sign"></i> Fare (₹)
+                                    </label>
+                                    <input type="number" id="r-fare" placeholder="e.g. 450" min="1" step="0.01">
+                                    <span class="appt-error" id="err-fare"></span>
+                                </div>
+                                <div class="appt-form-group" id="grp-duration">
+                                    <label for="r-duration">
+                                        <i class="fas fa-hourglass-half"></i> Est. Travel Time (mins)
+                                    </label>
+                                    <input type="number" id="r-duration" placeholder="e.g. 180" min="1">
+                                    <span class="appt-error" id="err-duration"></span>
+                                </div>
+                            </div>
+
+                            <div class="appt-form-group" id="grp-dist">
+                                <label for="r-distance">
+                                    <i class="fas fa-road"></i> Distance (km) <span class="rm-optional">optional</span>
+                                </label>
+                                <input type="number" id="r-distance" placeholder="e.g. 275" min="0" step="0.1">
+                            </div>
+
+                            <!-- PREVIEW -->
+                            <div class="rm-live-preview" id="rm-live-preview">
+                                <div class="rm-preview-label">Live Preview</div>
+                                <div class="rm-preview-card">
+                                    <div class="rm-preview-route">
+                                        <span class="rm-preview-city" id="prev-from">Origin</span>
+                                        <div class="rm-preview-arrow">
+                                            <i class="fas fa-long-arrow-alt-right"></i>
+                                        </div>
+                                        <span class="rm-preview-city" id="prev-to">Destination</span>
+                                    </div>
+                                    <div class="rm-preview-meta">
+                                        <span><i class="fas fa-tag"></i> <span id="prev-name">Route Name</span></span>
+                                        <span><i class="fas fa-rupee-sign"></i> <span id="prev-fare">--</span></span>
+                                        <span><i class="fas fa-clock"></i> <span id="prev-dur">-- mins</span></span>
+                                        <span><i class="fas fa-road"></i> <span id="prev-dist">--</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rm-form-actions">
+                                <button type="submit" class="appt-submit-btn" id="route-submit-btn">
+                                    <span id="route-btn-text">
+                                        <i class="fas fa-plus-circle"></i> Add Route
+                                    </span>
+                                    <span id="route-btn-loader" style="display:none;">
+                                        <i class="fas fa-spinner fa-spin"></i> Saving…
+                                    </span>
+                                </button>
+                                <button type="button" class="rm-cancel-btn" id="rm-cancel-btn" onclick="cancelEdit()" style="display:none;">
+                                    <i class="fas fa-times"></i> Cancel Edit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- INFO PANEL -->
+                    <div class="appt-card appt-info-card rm-info-side">
+                        <h3><i class="fas fa-info-circle"></i> Route Fields Guide</h3>
+                        <ul class="appt-steps">
+                            <li>
+                                <span class="appt-step-num"><i class="fas fa-map-marker-alt" style="font-size:0.7rem"></i></span>
+                                <div><strong>From / To</strong><p>Origin and destination city names</p></div>
+                            </li>
+                            <li>
+                                <span class="appt-step-num"><i class="fas fa-tag" style="font-size:0.7rem"></i></span>
+                                <div><strong>Route Name</strong><p>Descriptive label, e.g. <em>Hyderabad – Vijayawada Express Route</em></p></div>
+                            </li>
+                            <li>
+                                <span class="appt-step-num"><i class="fas fa-rupee-sign" style="font-size:0.7rem"></i></span>
+                                <div><strong>Fare</strong><p>Base ticket fare in Indian Rupees</p></div>
+                            </li>
+                            <li>
+                                <span class="appt-step-num"><i class="fas fa-clock" style="font-size:0.7rem"></i></span>
+                                <div><strong>Travel Time</strong><p>Estimated trip duration in minutes</p></div>
+                            </li>
+                            <li>
+                                <span class="appt-step-num"><i class="fas fa-road" style="font-size:0.7rem"></i></span>
+                                <div><strong>Distance</strong><p>Route length in km (optional field)</p></div>
+                            </li>
+                        </ul>
+                        <div class="appt-highlight-box">
+                            <i class="fas fa-database"></i>
+                            <span>Route data is stored in the MySQL <strong>routes</strong> table and is immediately available for booking</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================== TAB: ROUTES LIST ======================== -->
+            <div class="rm-tab-content" id="content-routes">
+                <div class="appt-card">
+                    <div class="appt-card-header">
+                        <div class="appt-card-icon"><i class="fas fa-route"></i></div>
+                        <div>
+                            <h2>All Routes</h2>
+                            <p>Live data from the <code>routes</code> table — click Edit or Delete to manage</p>
+                        </div>
+                        <div class="rm-list-actions">
+                            <div class="rm-search-wrap">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="rm-search" placeholder="Search route, city…" oninput="filterTable(this.value)">
+                            </div>
+                            <button class="appt-refresh-btn" onclick="loadRoutesList()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="appt-table-wrap">
+                        <table class="appt-table" id="routes-table">
+                            <thead>
+                                <tr>
+                                    <th>Route ID</th>
+                                    <th>Route Name</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Fare (₹)</th>
+                                    <th>Distance</th>
+                                    <th>Travel Time</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="routes-tbody">
+                                <tr><td colspan="9" class="appt-empty-row">
+                                    <i class="fas fa-sync fa-spin"></i><p>Loading routes…</p>
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="appt-table-footer" id="routes-count">--</div>
+                </div>
+            </div>
+
+            <!-- ======================== TAB: BOOK VIA ROUTE ======================== -->
+            <div class="rm-tab-content" id="content-book">
+                <div class="rm-book-header">
+                    <h2><i class="fas fa-ticket-alt"></i> Book an Appointment via Route</h2>
+                    <p>Select a route below, then fill in your details to book an appointment on that route.</p>
+                </div>
+
+                <!-- ROUTE SELECTOR CARDS -->
+                <div class="rm-route-selector" id="rm-route-selector">
+                    <div class="appt-empty-row" style="text-align:center; padding:40px; color:#9CA3AF;">
+                        <i class="fas fa-spinner fa-spin" style="font-size:2rem;display:block;margin-bottom:12px;"></i>
+                        <p>Loading available routes…</p>
+                    </div>
+                </div>
+
+                <!-- BOOKING FORM (shown after route selected) -->
+                <div class="rm-booking-panel" id="rm-booking-panel" style="display:none;">
+                    <div class="appt-card rm-booking-card">
+                        <div class="rm-selected-route-banner" id="rm-selected-route-banner"></div>
+                        <div class="appt-card-header" style="margin-top:16px;">
+                            <div class="appt-card-icon"><i class="fas fa-user-edit"></i></div>
+                            <div>
+                                <h2>Passenger Details</h2>
+                                <p>Complete your booking for the selected route</p>
+                            </div>
+                        </div>
+                        <form id="bookingViaRouteForm" novalidate>
+                            <input type="hidden" id="bvr-route-id">
+                            <input type="hidden" id="bvr-route-label">
+                            <div class="appt-form-row">
+                                <div class="appt-form-group" id="bvr-grp-name">
+                                    <label for="bvr-name"><i class="fas fa-user"></i> Full Name</label>
+                                    <input type="text" id="bvr-name" placeholder="e.g. John Doe">
+                                    <span class="appt-error" id="bvr-err-name"></span>
+                                </div>
+                                <div class="appt-form-group" id="bvr-grp-email">
+                                    <label for="bvr-email"><i class="fas fa-envelope"></i> Email</label>
+                                    <input type="email" id="bvr-email" placeholder="you@example.com">
+                                    <span class="appt-error" id="bvr-err-email"></span>
+                                </div>
+                            </div>
+                            <div class="appt-form-row">
+                                <div class="appt-form-group" id="bvr-grp-phone">
+                                    <label for="bvr-phone"><i class="fas fa-phone"></i> Phone Number</label>
+                                    <input type="tel" id="bvr-phone" placeholder="10-digit mobile">
+                                    <span class="appt-error" id="bvr-err-phone"></span>
+                                </div>
+                                <div class="appt-form-group" id="bvr-grp-date">
+                                    <label for="bvr-date"><i class="fas fa-calendar-alt"></i> Travel Date</label>
+                                    <input type="date" id="bvr-date">
+                                    <span class="appt-error" id="bvr-err-date"></span>
+                                </div>
+                            </div>
+                            <div class="appt-form-group" id="bvr-grp-slot">
+                                <label><i class="fas fa-clock"></i> Departure Time Slot</label>
+                                <div class="slot-grid" id="bvr-slot-grid"></div>
+                                <input type="hidden" id="bvr-slot">
+                                <span class="appt-error" id="bvr-err-slot"></span>
+                            </div>
+                            <button type="submit" class="appt-submit-btn" id="bvr-submit-btn">
+                                <span id="bvr-btn-text"><i class="fas fa-check-circle"></i> Confirm Booking</span>
+                                <span id="bvr-btn-loader" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Saving…</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SUCCESS PREVIEW -->
+                    <div class="appt-card appt-preview-card" id="bvr-preview" style="display:none;">
+                        <div class="appt-preview-header">
+                            <div class="appt-success-ring"><i class="fas fa-check"></i></div>
+                            <h2>Booking Confirmed!</h2>
+                            <p class="appt-booking-id-label">Booking ID</p>
+                            <div class="appt-booking-id-badge" id="bvr-preview-id">--</div>
+                        </div>
+                        <div class="appt-preview-body">
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-route"></i></span>
+                                <div><span class="appt-preview-label">Route</span><span class="appt-preview-value" id="bvr-preview-route">--</span></div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-user"></i></span>
+                                <div><span class="appt-preview-label">Name</span><span class="appt-preview-value" id="bvr-preview-name">--</span></div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-envelope"></i></span>
+                                <div><span class="appt-preview-label">Email</span><span class="appt-preview-value" id="bvr-preview-email">--</span></div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-calendar"></i></span>
+                                <div><span class="appt-preview-label">Travel Date</span><span class="appt-preview-value" id="bvr-preview-date">--</span></div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-clock"></i></span>
+                                <div><span class="appt-preview-label">Time Slot</span><span class="appt-preview-value" id="bvr-preview-slot">--</span></div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-star"></i></span>
+                                <div><span class="appt-preview-label">Status</span><span class="appt-preview-value appt-status-badge">Confirmed</span></div>
+                            </div>
+                        </div>
+                        <div class="appt-preview-footer">
+                            <button class="appt-new-btn" onclick="resetBvrForm()"><i class="fas fa-plus-circle"></i> Book Another</button>
+                            <button class="appt-view-btn" onclick="window.location.href='/appointment.html#list'"><i class="fas fa-list-ul"></i> View All Bookings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /container -->
+    </main>
+
+    <!-- DELETE CONFIRM DIALOG -->
+    <div class="rm-dialog-overlay" id="rm-dialog" style="display:none;">
+        <div class="rm-dialog">
+            <div class="rm-dialog-icon"><i class="fas fa-trash-alt"></i></div>
+            <h3>Delete Route?</h3>
+            <p id="rm-dialog-msg">This will permanently remove the route from the database.</p>
+            <div class="rm-dialog-actions">
+                <button class="rm-dialog-cancel" onclick="closeDialog()">Cancel</button>
+                <button class="rm-dialog-confirm" id="rm-dialog-confirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="appt-toast-container"></div>
+    <script src="/routes-manager.js"></script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusTicket - Premium Travel Experience</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-bus-alt"></i> BusTicket
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/" data-route class="active">Home</a></li>
+                    <li><a href="/routes" data-route>Routes</a></li>
+                    <li><a href="/appointments" data-route>Appointments</a></li>
+                    <li><a href="/contact" data-route>Contact</a></li>
+                </ul>
+                <button id="signInBtn" class="btn-primary">Sign In</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== PAGE: HOME ==================== -->
+    <main data-page="home" class="page-section active">
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1>Journey with Comfort & Style</h1>
+                <p>Book your bus tickets instantly with zero booking fees.</p>
+
+                <div class="search-box">
+                    <div class="input-group">
+                        <label>From</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="source" placeholder="Departure City">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>To</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-map-pin"></i>
+                            <input type="text" id="destination" placeholder="Destination City">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Date</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="date">
+                        </div>
+                    </div>
+                    <button id="searchBtn" class="btn-search">Search Buses</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular routes hidden from home as per request -->
+    </main>
+
+    <!-- ==================== PAGE: ROUTES ==================== -->
+    <main data-page="routes" class="page-section">
+        <section class="routes-section" style="padding-top: 120px;">
+            <div class="container">
+                <div class="section-header">
+                    <h2>All Available Routes</h2>
+                    <p>Browse and book from our complete route network</p>
+                </div>
+
+                <!-- Search filter on routes page -->
+                <div class="routes-filter-bar">
+                    <div class="input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="routeSearchInput" placeholder="Search routes by city...">
+                    </div>
+                </div>
+
+                <div id="route-list" class="route-grid">
+                    <!-- All routes injected via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== PAGE: APPOINTMENTS ==================== -->
+    <main data-page="appointments" class="page-section">
+        <section class="appt-hero" style="padding-top: 120px; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; padding-bottom: 60px;">
+            <div class="container text-center">
+                <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Book Your Appointment</h1>
+                <p style="opacity: 0.9;">Select a date & time slot and confirm your booking instantly.</p>
+            </div>
+        </section>
+
+        <section class="appt-main" style="padding: 60px 0; background: #f8fafc;">
+            <div class="container" id="appointment-spa-container">
+                <div style="max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                    <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
+                        <div style="width: 50px; height: 50px; background: #4f46e5; color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.5rem; color: #1e1b4b; margin: 0;">Online Booking</h2>
+                            <p style="color: #64748b; margin: 5px 0 0 0;">Fill in your details to reserve a slot</p>
+                        </div>
+                    </div>
+
+                    <div id="selected-route-preview"></div>
+
+                    <div id="spa-appointment-success" style="display: none; text-align: center; padding: 20px;">
+                        <i class="fas fa-check-circle" style="font-size: 4rem; color: #10B981; margin-bottom: 20px;"></i>
+                        <h2 style="color: #1e1b4b; margin-bottom: 15px;">Appointment Confirmed!</h2>
+                        <p id="spa-success-msg" style="color: #64748b; margin-bottom: 25px;"></p>
+                        <button onclick="navigateTo('/bookings')" class="btn-primary" style="padding: 12px 30px;">View My Bookings</button>
+                    </div>
+
+                    <form id="spaAppointmentForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Full Name</label>
+                                <input type="text" id="spa-appt-name" required placeholder="John Doe" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                            </div>
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Email Address</label>
+                                <input type="email" id="spa-appt-email" required placeholder="you@example.com" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Phone Number</label>
+                                <input type="tel" id="spa-appt-phone" required placeholder="10-digit mobile" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                            </div>
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #475569;">Booking Date</label>
+                                <input type="date" id="spa-appt-date" required style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 30px;">
+                            <label style="display: block; margin-bottom: 12px; font-weight: 500; color: #475569;">Select Time Slot</label>
+                            <div id="spa-slot-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;">
+                                <!-- Slots here -->
+                            </div>
+                            <input type="hidden" id="spa-selected-slot">
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: 600;">
+                            Confirm Appointment
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- ==================== PAGE: BOOKINGS ==================== -->
+    <main data-page="bookings" class="page-section">
+        <section class="bookings-section" style="padding-top: 120px; min-height: 80vh;">
+            <div class="container">
+                <div class="section-header">
+                    <h2>My Bookings</h2>
+                    <p>Manage and view your travel reservations</p>
+                </div>
+                
+                <div id="bookings-list" class="bookings-grid">
+                    <!-- Bookings injected via JS -->
+                    <div class="loading-spinner" style="text-align: center; padding: 40px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                        <p style="margin-top: 10px; color: var(--gray);">Loading your bookings...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== PAGE: CONTACT ==================== -->
+    <main data-page="contact" class="page-section">
+        <section class="contact-section" style="padding-top: 120px;">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Get In Touch</h2>
+                    <p>We'd love to hear from you. Reach out with any questions!</p>
+                </div>
+
+                <div class="contact-grid">
+                    <!-- Contact Info Cards -->
+                    <div class="contact-info-panel">
+                        <div class="contact-info-card">
+                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <h3>Our Office</h3>
+                            <p>123 MG Road, Bangalore<br>Karnataka 560001, India</p>
+                        </div>
+                        <div class="contact-info-card">
+                            <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                            <h3>Call Us</h3>
+                            <p>+91 8972 1799 58<br>Mon - Sat, 9AM - 8PM</p>
+                        </div>
+                        <div class="contact-info-card">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <h3>Email Us</h3>
+                            <p>support@busticket.com<br>info@busticket.com</p>
+                        </div>
+                        <div class="contact-info-card">
+                            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+                            <h3>Working Hours</h3>
+                            <p>Monday - Saturday<br>9:00 AM - 8:00 PM IST</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="contact-form-panel">
+                        <h3>Send us a Message</h3>
+                        <form id="contactForm" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Your Name</label>
+                                    <input type="text" required placeholder="Enter your name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" required placeholder="you@example.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <input type="text" required placeholder="How can we help?">
+                            </div>
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea rows="5" required placeholder="Write your message here..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 1.05rem;">
+                                <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== MODALS ==================== -->
+    <!-- The bookingModal (seat selection) has been replaced by the direct Appointment SPA flow -->
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content auth-content">
+            <span class="close-modal close-auth">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" required placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+                <p class="auth-note">Demo: user@example.com / password</p>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" required placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" required placeholder="Create password">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-bus-alt"></i> BusTicket
+                    <p>Safe and comfortable journeys.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/" data-route>Home</a></li>
+                        <li><a href="/routes" data-route>Browse Routes</a></li>
+                        <li><a href="/bookings" data-route>My Bookings</a></li>
+                        <li><a href="/contact" data-route>Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-envelope"></i> support@busticket.com</p>
+                    <p><i class="fas fa-phone"></i> +91 8972 1799 58</p>
+                </div>
+            </div>
+            <div class="copyright">
+                Made by TUSAR, VISHAL, PIYUSH, PRINCE |
+            </div>
+        </div>
+    </footer>
+
+    <!-- Profile Page Overlay -->
+    <div id="profilePage" class="profile-page">
+        <div class="profile-page-inner">
+            <button id="profileBackBtn" class="profile-back-btn">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <div class="profile-avatar-lg" id="profileAvatarLg">JD</div>
+                    <h2 id="profileFullName" class="profile-name">John Doe</h2>
+                    <p id="profileEmail" class="profile-email"><i class="fas fa-envelope"></i> user@example.com</p>
+                </div>
+
+                <div class="profile-card-body">
+                    <div class="profile-info-row">
+                        <div class="profile-info-icon"><i class="fas fa-user"></i></div>
+                        <div>
+                            <span class="profile-info-label">Account Type</span>
+                            <span class="profile-info-value">Passenger</span>
+                        </div>
+                    </div>
+                    <div class="profile-info-row">
+                        <div class="profile-info-icon"><i class="fas fa-calendar-check"></i></div>
+                        <div>
+                            <span class="profile-info-label">Member Since</span>
+                            <span class="profile-info-value" id="profileMemberSince">March 2026</span>
+                        </div>
+                    </div>
+                    <div class="profile-info-row">
+                        <div class="profile-info-icon"><i class="fas fa-ticket-alt"></i></div>
+                        <div>
+                            <span class="profile-info-label">Total Bookings</span>
+                            <span class="profile-info-value" id="profileTotalBookings">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-card-footer">
+                    <button id="logoutBtn" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/app.js"></script>
+</body>
+
+</html>

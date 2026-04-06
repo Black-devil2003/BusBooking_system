@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | BusTicket</title>
+    <meta name="description" content="Book an appointment online. Fill in your details, choose a date and time slot, and get instant confirmation.">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/appointment.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="appt-body">
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="/" class="logo" style="text-decoration:none;">
+                    <i class="fas fa-bus-alt"></i> BusTicket
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/routes">Routes</a></li>
+                    <li><a href="/appointment.html" class="active">Appointments</a></li>
+                </ul>
+                <a href="/" class="btn-primary" style="text-decoration:none; font-size:0.9rem;">
+                    <i class="fas fa-arrow-left" style="margin-right:6px;"></i> Back to App
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== HERO BANNER ===== -->
+    <section class="appt-hero">
+        <div class="appt-hero-overlay"></div>
+        <div class="container appt-hero-content">
+            <div class="appt-hero-badge"><i class="fas fa-calendar-check"></i> Online Appointment</div>
+            <h1>Book Your Appointment</h1>
+            <p>Select a date & time slot and confirm your booking instantly — no page reloads, instant database save.</p>
+        </div>
+    </section>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="appt-main">
+        <div class="container">
+
+            <!-- TABS -->
+            <div class="appt-tab-bar">
+                <button class="appt-tab active" id="tab-book" onclick="switchTab('book')">
+                    <i class="fas fa-calendar-plus"></i> Book Appointment
+                </button>
+                <button class="appt-tab" id="tab-list" onclick="switchTab('list')">
+                    <i class="fas fa-list-ul"></i> Bookings List
+                </button>
+                <button class="appt-tab" id="tab-admin" onclick="switchTab('admin')">
+                    <i class="fas fa-shield-alt"></i> Admin Dashboard
+                </button>
+            </div>
+
+            <!-- ===== TAB: BOOK ===== -->
+            <div class="appt-tab-content active" id="content-book">
+                <div class="appt-two-col">
+
+                    <!-- BOOKING FORM -->
+                    <div class="appt-card appt-form-card">
+                        <div class="appt-card-header">
+                            <div class="appt-card-icon"><i class="fas fa-user-edit"></i></div>
+                            <div>
+                                <h2>Your Details</h2>
+                                <p>Fill in the form below to book your appointment</p>
+                            </div>
+                        </div>
+
+                        <form id="appointmentForm" novalidate>
+
+                            <div class="appt-form-row">
+                                <div class="appt-form-group" id="grp-name">
+                                    <label for="appt-name">
+                                        <i class="fas fa-user"></i> Full Name
+                                    </label>
+                                    <input type="text" id="appt-name" placeholder="e.g. John Doe" autocomplete="name">
+                                    <span class="appt-error" id="err-name"></span>
+                                </div>
+                                <div class="appt-form-group" id="grp-email">
+                                    <label for="appt-email">
+                                        <i class="fas fa-envelope"></i> Email Address
+                                    </label>
+                                    <input type="email" id="appt-email" placeholder="you@example.com" autocomplete="email">
+                                    <span class="appt-error" id="err-email"></span>
+                                </div>
+                            </div>
+
+                            <div class="appt-form-row">
+                                <div class="appt-form-group" id="grp-phone">
+                                    <label for="appt-phone">
+                                        <i class="fas fa-phone"></i> Phone Number
+                                    </label>
+                                    <input type="tel" id="appt-phone" placeholder="10-digit mobile number" autocomplete="tel">
+                                    <span class="appt-error" id="err-phone"></span>
+                                </div>
+                                <div class="appt-form-group" id="grp-date">
+                                    <label for="appt-date">
+                                        <i class="fas fa-calendar-alt"></i> Appointment Date
+                                    </label>
+                                    <input type="date" id="appt-date">
+                                    <span class="appt-error" id="err-date"></span>
+                                </div>
+                            </div>
+
+                            <div class="appt-form-group" id="grp-slot">
+                                <label><i class="fas fa-clock"></i> Time Slot</label>
+                                <div class="slot-grid" id="slot-grid">
+                                    <!-- slots injected by JS -->
+                                </div>
+                                <input type="hidden" id="appt-slot">
+                                <span class="appt-error" id="err-slot"></span>
+                            </div>
+
+                            <button type="submit" class="appt-submit-btn" id="appt-submit-btn">
+                                <span id="appt-btn-text">
+                                    <i class="fas fa-check-circle"></i> Book Appointment
+                                </span>
+                                <span id="appt-btn-loader" style="display:none;">
+                                    <i class="fas fa-spinner fa-spin"></i> Saving to Database…
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SUCCESS PREVIEW (hidden initially) -->
+                    <div class="appt-card appt-preview-card" id="appt-preview">
+                        <div class="appt-preview-header">
+                            <div class="appt-success-ring">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h2>Booking Confirmed!</h2>
+                            <p class="appt-booking-id-label">Booking ID</p>
+                            <div class="appt-booking-id-badge" id="preview-booking-id">--</div>
+                        </div>
+                        <div class="appt-preview-body">
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-user"></i></span>
+                                <div>
+                                    <span class="appt-preview-label">Name</span>
+                                    <span class="appt-preview-value" id="preview-name">--</span>
+                                </div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-envelope"></i></span>
+                                <div>
+                                    <span class="appt-preview-label">Email</span>
+                                    <span class="appt-preview-value" id="preview-email">--</span>
+                                </div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-phone"></i></span>
+                                <div>
+                                    <span class="appt-preview-label">Phone</span>
+                                    <span class="appt-preview-value" id="preview-phone">--</span>
+                                </div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-calendar"></i></span>
+                                <div>
+                                    <span class="appt-preview-label">Date</span>
+                                    <span class="appt-preview-value" id="preview-date">--</span>
+                                </div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-clock"></i></span>
+                                <div>
+                                    <span class="appt-preview-label">Time Slot</span>
+                                    <span class="appt-preview-value" id="preview-slot">--</span>
+                                </div>
+                            </div>
+                            <div class="appt-preview-row">
+                                <span class="appt-preview-icon"><i class="fas fa-star"></i></span>
+                                <div>
+                                    <span class="appt-preview-label">Status</span>
+                                    <span class="appt-preview-value appt-status-badge">Confirmed</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="appt-preview-footer">
+                            <button class="appt-new-btn" onclick="resetForm()">
+                                <i class="fas fa-plus-circle"></i> Book Another
+                            </button>
+                            <button class="appt-view-btn" onclick="switchTab('list')">
+                                <i class="fas fa-list-ul"></i> View All Bookings
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- INFO PANEL (visible before submission) -->
+                    <div class="appt-card appt-info-card" id="appt-info-panel">
+                        <h3><i class="fas fa-info-circle"></i> How it Works</h3>
+                        <ul class="appt-steps">
+                            <li>
+                                <span class="appt-step-num">1</span>
+                                <div><strong>Fill Your Details</strong><p>Enter your name, email & phone number</p></div>
+                            </li>
+                            <li>
+                                <span class="appt-step-num">2</span>
+                                <div><strong>Choose Date & Slot</strong><p>Select a date and available time slot</p></div>
+                            </li>
+                            <li>
+                                <span class="appt-step-num">3</span>
+                                <div><strong>Instant Confirmation</strong><p>Your booking is saved to the database immediately</p></div>
+                            </li>
+                            <li>
+                                <span class="appt-step-num">4</span>
+                                <div><strong>View Your Booking</strong><p>See your booking ID in the Bookings List tab</p></div>
+                            </li>
+                        </ul>
+                        <div class="appt-highlight-box">
+                            <i class="fas fa-database"></i>
+                            <span>All bookings are stored in <strong>MySQL</strong> and viewable in the Admin Dashboard</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ===== TAB: BOOKINGS LIST ===== -->
+            <div class="appt-tab-content" id="content-list">
+                <div class="appt-card">
+                    <div class="appt-card-header">
+                        <div class="appt-card-icon"><i class="fas fa-database"></i></div>
+                        <div>
+                            <h2>Live Bookings from Database</h2>
+                            <p>Records fetched in real-time from the <code>appointments</code> table</p>
+                        </div>
+                        <button class="appt-refresh-btn" onclick="loadBookingsList()" id="refresh-list-btn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="appt-table-wrap">
+                        <table class="appt-table" id="bookings-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Booking ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Date</th>
+                                    <th>Time Slot</th>
+                                    <th>Status</th>
+                                    <th>Booked At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookings-tbody">
+                                <tr>
+                                    <td colspan="9" class="appt-empty-row">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>Click <strong>Refresh</strong> or complete a booking to see records here.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="appt-table-footer" id="bookings-count">--</div>
+                </div>
+            </div>
+
+            <!-- ===== TAB: ADMIN DASHBOARD ===== -->
+            <div class="appt-tab-content" id="content-admin">
+                <div class="appt-admin-stats" id="admin-stats">
+                    <div class="appt-stat-card">
+                        <div class="appt-stat-icon" style="background:linear-gradient(135deg,#4F46E5,#7C3AED)">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <div class="appt-stat-num" id="stat-total">--</div>
+                            <div class="appt-stat-label">Total Bookings</div>
+                        </div>
+                    </div>
+                    <div class="appt-stat-card">
+                        <div class="appt-stat-icon" style="background:linear-gradient(135deg,#10B981,#059669)">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <div class="appt-stat-num" id="stat-confirmed">--</div>
+                            <div class="appt-stat-label">Confirmed</div>
+                        </div>
+                    </div>
+                    <div class="appt-stat-card">
+                        <div class="appt-stat-icon" style="background:linear-gradient(135deg,#F59E0B,#D97706)">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="appt-stat-num" id="stat-today">--</div>
+                            <div class="appt-stat-label">Today's Bookings</div>
+                        </div>
+                    </div>
+                    <div class="appt-stat-card">
+                        <div class="appt-stat-icon" style="background:linear-gradient(135deg,#EC4899,#BE185D)">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <div class="appt-stat-num" id="stat-unique">--</div>
+                            <div class="appt-stat-label">Unique Clients</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="appt-card">
+                    <div class="appt-card-header">
+                        <div class="appt-card-icon" style="background:linear-gradient(135deg,#EF4444,#B91C1C)">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h2>Admin — All Appointments</h2>
+                            <p>Full view of every record in the <code>appointments</code> table</p>
+                        </div>
+                        <button class="appt-refresh-btn" onclick="loadAdminDashboard()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="appt-table-wrap">
+                        <table class="appt-table" id="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Booking ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Date</th>
+                                    <th>Time Slot</th>
+                                    <th>Status</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-tbody">
+                                <tr>
+                                    <td colspan="9" class="appt-empty-row">
+                                        <i class="fas fa-shield-alt"></i>
+                                        <p>Click <strong>Refresh</strong> to load all appointments from the database.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="appt-table-footer" id="admin-count">--</div>
+                </div>
+            </div>
+
+        </div><!-- /container -->
+    </main>
+
+    <div id="appt-toast-container"></div>
+
+    <script src="/appointment.js"></script>
+</body>
+</html>
