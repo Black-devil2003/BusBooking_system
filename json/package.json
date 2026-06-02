@@ -1,0 +1,28 @@
+{
+  "name": "java-project",
+  "version": "1.0.0",
+  "description": "A Java console-based bus ticket booking system with JDBC and MySQL.",
+  "main": "../js/server/server.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "scripts": {
+    "clean": "node ../js/build/cleanBuild.js",
+    "compile": "npm run clean && javac -d ../bin -cp \"../lib/*\" ../src/model/*.java ../src/util/*.java ../src/dao/*.java ../src/service/*.java ../src/main/*.java",
+    "start": "node ../js/server/server.js",
+    "java": "java -cp \"../bin;../lib/*\" main.BusTicketApp",
+    "check": "npm run compile && node --check ../js/server/server.js && node --check ../js/server/javaRunner.js && node --check ../js/build/cleanBuild.js && node --check ../js/config/vite.config.js",
+    "test": "npm run check"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.19.1",
+    "vite": "^7.3.1"
+  }
+}

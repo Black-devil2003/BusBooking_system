@@ -1,5 +1,7 @@
 @echo off
-if not exist bin mkdir bin
+if exist bin rmdir /s /q bin
+for /r src %%f in (*.class) do del /q "%%f"
+mkdir bin
 
 REM Compile in dependency order
 echo Compiling models...

@@ -1,5 +1,4 @@
 package dao;
-
 import model.User;
 import util.DatabaseConnection;
 
@@ -11,12 +10,14 @@ import java.sql.*;
  */
 public class UserDAO {
     private Connection connection;
+    private String lastErrorMessage;
 
     public UserDAO() {
         try {
             this.connection = DatabaseConnection.getInstance().getConnection();
         } catch (SQLException e) {
             this.connection = null;
+            this.lastErrorMessage = e.getMessage();
         }
     }
 
@@ -52,6 +53,7 @@ public class UserDAO {
     public boolean registerUser(String name, String email, String password) {
         String sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
         try {
+            lastErrorMessage = null;
             checkConnection();
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, name);
@@ -60,9 +62,14 @@ public class UserDAO {
                 return stmt.executeUpdate() > 0;
             }
         } catch (SQLException e) {
-            System.err.println("Error registering user: " + e.getMessage());
+            lastErrorMessage = e.getMessage();
+            System.err.println("Error registering user: " + lastErrorMessage);
             return false;
         }
+    }
+
+    public String getLastErrorMessage() {
+        return lastErrorMessage;
     }
 
     /**
@@ -93,7 +100,7 @@ public class UserDAO {
 
     /**
      * SHA-256 password hashing with salt
-     * Matches the logic in server.js
+     * Matches the authentication flow used by the Node API server
      */
     private String hashPassword(String password) {
         try {

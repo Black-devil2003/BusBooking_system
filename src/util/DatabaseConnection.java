@@ -48,16 +48,21 @@ public class DatabaseConnection {
                 System.out.println("[INFO] Using default database configuration (properties file not found)");
                 this.url = "jdbc:mysql://localhost:3306/bus_booking_db";
                 this.username = "root";
-                this.password = "Tusar@1234";
+                this.password = "TUsar@2006";
                 this.driver = "com.mysql.cj.jdbc.Driver";
             } else {
                 props.load(input);
                 this.url = props.getProperty("db.url", "jdbc:mysql://localhost:3306/bus_booking_db");
                 this.username = props.getProperty("db.username", "root");
-                this.password = props.getProperty("db.password", "Tusar@1234");
+                this.password = props.getProperty("db.password", "");
                 this.driver = props.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
                 input.close();
             }
+
+            this.url = getEnvOrDefault("BUS_DB_URL", this.url);
+            this.username = getEnvOrDefault("BUS_DB_USERNAME", this.username);
+            this.password = getEnvOrDefault("BUS_DB_PASSWORD", this.password);
+            this.driver = getEnvOrDefault("BUS_DB_DRIVER", this.driver);
 
             // Load JDBC driver
             Class.forName(driver);
@@ -67,6 +72,11 @@ public class DatabaseConnection {
         } catch (ClassNotFoundException e) {
             System.err.println("[ERROR] JDBC Driver not found: " + e.getMessage());
         }
+    }
+
+    private String getEnvOrDefault(String key, String defaultValue) {
+        String value = System.getenv(key);
+        return value == null || value.trim().isEmpty() ? defaultValue : value.trim();
     }
 
     /**

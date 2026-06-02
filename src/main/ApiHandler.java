@@ -113,7 +113,18 @@ public class ApiHandler {
         UserDAO dao = new UserDAO();
         dao.ensureUserTableExists();
         boolean success = dao.registerUser(name, email, password);
-        System.out.println("{\"success\": " + success + "}");
+        if (success) {
+            System.out.println("{\"success\": true}");
+        } else {
+            String message = dao.getLastErrorMessage();
+            if (message == null || message.trim().isEmpty()) {
+                message = "Registration failed";
+            }
+            System.out.println(gson.toJson(java.util.Map.of(
+                    "success", false,
+                    "message", message
+            )));
+        }
     }
 
     private static void handleLogin(String email, String password) {

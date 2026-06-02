@@ -1,3 +1,3 @@
 @echo off
-java -cp "bin;lib/*" BusTicketApp
+java -cp "bin;lib/*" main.BusTicketApp
 pause

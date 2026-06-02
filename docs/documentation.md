@@ -69,7 +69,7 @@ The system follows a **3-tier architecture**:
 Java Project/
 ├── sql/
 │   ├── database_setup.sql      # Database and table creation
-│   └── sample_data.sql         # Sample data for testing
+│   └── populate_15_routes.sql  # Route, bus, and seat seed data
 ├── src/
 │   ├── config/
 │   │   └── db.properties       # Database configuration
@@ -588,7 +588,7 @@ FROM bookings;
    ```
 3. Run the sample data script:
    ```sql
-   source /path/to/sql/sample_data.sql
+   source /path/to/sql/populate_15_routes.sql
    ```
 
 ### 8.3 Configuration
@@ -618,12 +618,12 @@ javac -cp "lib/*" -d bin src/**/*.java src/*.java
 
 ```bash
 # Run the application
-java -cp "bin;lib/*" BusTicketApp
+java -cp "bin;lib/*" main.BusTicketApp
 ```
 
 On Linux/Mac:
 ```bash
-java -cp "bin:lib/*" BusTicketApp
+java -cp "bin:lib/*" main.BusTicketApp
 ```
 
 ---

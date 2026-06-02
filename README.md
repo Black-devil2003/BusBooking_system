@@ -1,73 +1,125 @@
-# 🚌 Bus Ticket Booking System
+# Bus Ticket Booking System
 
-A Java console-based bus ticket booking system with JDBC and MySQL.
+A Java console-based bus ticket booking system with JDBC and MySQL, plus an Express web API and static web UI.
 
 ## Features
 
-- ✅ Book bus tickets for various routes
-- ✅ Cancel bookings
-- ✅ View seat availability with visual seat map
-- ✅ Prevent double booking using transactions
-- ✅ Search bookings by ID or phone number
-- ✅ Beautiful console UI with colors
+- Book bus tickets for available routes
+- Cancel bookings
+- View seat availability with a visual seat map
+- Prevent double booking with database transactions
+- Search bookings by ID, phone number, or contact details
+- Manage routes through the web API
 
-## Quick Start
-
-### Prerequisites
+## Prerequisites
 
 - Java JDK 8 or higher
 - MySQL Server 5.7 or higher
-- MySQL Connector/J (JDBC driver)
+- Node.js 18 or higher
+- MySQL Connector/J in `lib/`
 
-### Database Setup
+## Database Setup
 
-1. Start MySQL and run:
+Start MySQL, then run:
+
 ```sql
 source sql/database_setup.sql
-source sql/sample_data.sql
+source sql/populate_15_routes.sql
 ```
 
-### Configuration
+## Configuration
 
-Edit `src/config/db.properties`:
+Edit `src/config/db.properties`, or set environment variables before running the app:
+
 ```properties
 db.url=jdbc:mysql://localhost:3306/bus_booking_db
 db.username=root
 db.password=your_password
+db.driver=com.mysql.cj.jdbc.Driver
 ```
 
-### Compile & Run
+Supported environment variable overrides:
 
-**Windows:**
+```text
+BUS_DB_URL
+BUS_DB_USERNAME
+BUS_DB_PASSWORD
+BUS_DB_DRIVER
+```
+
+## Compile And Run
+
+Windows:
+
 ```cmd
-javac -cp "lib/*" -d bin src/config/*.java src/model/*.java src/util/*.java src/dao/*.java src/service/*.java src/*.java
-java -cp "bin;lib/*" BusTicketApp
+npm --prefix json run compile
+npm --prefix json run java
 ```
 
-**Linux/Mac:**
+Or run the batch files:
+
+```cmd
+compile.bat
+run.bat
+```
+
+Start the web server:
+
+```cmd
+npm --prefix json start
+```
+
+Then open `http://localhost:3000`.
+
+## Manual Java Commands
+
+Windows:
+
+```cmd
+javac -d bin -cp "lib/*" src/model/*.java src/util/*.java src/dao/*.java src/service/*.java src/main/*.java
+java -cp "bin;lib/*" main.BusTicketApp
+```
+
+Linux/Mac:
+
 ```bash
-javac -cp "lib/*" -d bin src/**/*.java src/*.java
-java -cp "bin:lib/*" BusTicketApp
+javac -d bin -cp "lib/*" src/model/*.java src/util/*.java src/dao/*.java src/service/*.java src/main/*.java
+java -cp "bin:lib/*" main.BusTicketApp
 ```
 
 ## Project Structure
 
+```text
+sql/                  SQL scripts
+src/
+  config/             Database configuration
+  dao/                Data access objects
+  main/               Console app and Java API handler
+  model/              Entity classes
+  service/            Business logic
+  util/               Utilities
+js/client/            Browser JavaScript
+js/server/            Node server and Java process connection
+js/build/             Build helper scripts
+js/config/            JavaScript config files
+json/                 JSON configuration files
+web/                  Static web UI
+js/tests/             Node-based smoke scripts
+lib/                  Java dependencies
+docs/                 Documentation
 ```
-├── sql/                  # SQL scripts
-├── src/
-│   ├── model/           # Entity classes
-│   ├── dao/             # Data Access Objects
-│   ├── service/         # Business logic
-│   ├── util/            # Utilities
-│   └── BusTicketApp.java
-├── docs/                # Documentation
-└── lib/                 # JDBC driver JAR
+
+## Checks
+
+```cmd
+npm --prefix json test
 ```
 
-## Documentation
+Because npm files are stored in `json/`, run npm commands from the project root with `npm --prefix json`:
 
-See [docs/documentation.md](docs/documentation.md) for complete documentation.
+```cmd
+npm --prefix json start
+npm --prefix json test
+```
 
-## Author
-
-Student - January 2026
+This compiles the Java sources and checks the Node server files for syntax errors.
